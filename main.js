@@ -24,20 +24,22 @@ function defendRoom(roomName) {
 
 module.exports.loop = function () {
 
+    var rcl = Game.spawns["Spawn1"].room.controller.level;
+
     var roster = {
         'harvester': {
             'total': 0,
-            'target': 2,
+            'target': (rcl == 1 ? 2 : 3),
             'default': 'deliver_energy'
         },
         'builder': {
             'total': 0,
-            'target': 4,
+            'target': 2 * rcl,
             'default': 'build'
         },
         'upgrade': {
             'total': 0,
-            'target': Game.spawns["Spawn1"].room.controller.level,
+            'target': rcl,
             'default': 'upgrade'
         },
         'repair': {
@@ -96,7 +98,7 @@ module.exports.loop = function () {
             for( var role in roster ) {
                 if( roster[role].total < roster[role].target ) {
                     var creepName = role+Game.time;
-                    console.log(spawn+": spawning "+creepName);
+                    console.log(spawn+": spawning "+creepName+" ("+roster[role].total+"/"+roster[role].target+")");
                     
                     var creepBody = [CARRY,MOVE,WORK];
                     if( spawn.room.energyAvailable > 500 )

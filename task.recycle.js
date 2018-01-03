@@ -22,12 +22,18 @@ module.exports = {
 			creep.suicide();
 			return;
 		}
-	
-		creep.say('♻️');
 
 		var res = spawn.recycleCreep(creep);
 		if( res == ERR_NOT_IN_RANGE ) {
-			creep.moveTo(spawn, {visualizePathStyle: {stroke: '#006600'}});
+		    if( creep.ticksToLive < 10 ) {
+		        console.log(creep+": has less than 10 ttl, suiciding");
+    			creep.say('💣');
+    			creep.memory = null;
+    			creep.suicide();
+		    } else {
+		        creep.say('♻️');
+    			creep.moveTo(spawn, {visualizePathStyle: {stroke: '#006600'}});
+		    }
 		} else if( res == OK ) {
 		    console.log(spawn+": recycled "+creep);
 		    /*
