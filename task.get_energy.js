@@ -17,7 +17,7 @@ module.exports = {
                 source = Game.getObjectById(creep.memory.source);
                 if( source == null ) {
                     creep.say('?!');
-                    console.log(creep+": unable to find expected energy source");
+                    // console.log(creep+": unable to find expected energy source");
                     creep.memory.source = null;
                     return;
                 }
@@ -42,7 +42,7 @@ module.exports = {
                 
                 var idx = Game.time % sources.length;
                 source = sources[idx];
-                console.log(creep+": found energy source "+source);
+                // console.log(creep+": found energy source "+source);
                 creep.memory.source = source.id;
             }
             

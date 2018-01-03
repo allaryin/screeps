@@ -30,6 +30,12 @@ module.exports = {
 			creep.moveTo(spawn, {visualizePathStyle: {stroke: '#006600'}});
 		} else if( res == OK ) {
 		    console.log(spawn+": recycled "+creep);
+		    /*
+		    var drops = spawn.room.find(FIND_DROPPED_RESOURCES);
+		    for( var drop in drops ) {
+		        console.log(drop+": "+drop.amount+" "+drop.resourceType+" @ "+drop.pos);
+		    }
+		    */
 		}
 	}
 };
