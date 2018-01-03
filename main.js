@@ -8,6 +8,20 @@ var tasks = {
     "repair": require('task.repair')
 }
 
+/**
+ * Lifted directly from http://docs.screeps.com/defense.html
+ */
+function defendRoom(roomName) {
+    var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+    if(hostiles.length > 0) {
+        var username = hostiles[0].owner.username;
+        Game.notify(`User ${username} spotted in room ${roomName}`);
+        var towers = Game.rooms[roomName].find(
+            FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+        towers.forEach(tower => tower.attack(hostiles[0]));
+    }
+}
+
 module.exports.loop = function () {
 
     var roster = {
@@ -61,6 +75,9 @@ module.exports.loop = function () {
     // see if we need more workers
     for(var name in Game.spawns) {
         var spawn = Game.spawns[name];
+        
+        // trigger towers
+        defendRoom(spawn.room.name);
         
         // only try to spawn from full for now
         if( spawn.spawning ) {
