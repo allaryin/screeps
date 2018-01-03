@@ -3,8 +3,8 @@ module.exports = {
         if( creep.carry.energy < creep.carryCapacity ) {
             if( creep.carry.energy == 0 ) {
                 if( creep.ticksToLive < 150 ) {
-                    console.log(creep+": suiciding because empty and ttl = "+creep.ticksToLive);
-                    creep.suicide();
+                    console.log(creep+": recycling because empty and ttl = "+creep.ticksToLive);
+                    creep.memory.task = 'recycle';
                     return;
                 } else {
                     creep.say('🔄');
@@ -15,24 +15,34 @@ module.exports = {
             var source = null;
             if( creep.memory.source != null ) {
                 source = Game.getObjectById(creep.memory.source);
+                if( source == null ) {
+                    creep.say('?!');
+                    console.log(creep+": unable to find expected energy source");
+                    creep.memory.source = null;
+                    return;
+                }
                 //console.log(creep+": heading to source "+source);
             } else {
+				// check for dropped resources first
                 var sources = null;
-                // for non-harvesters, try to extract from spawn instead
                 if( creep.memory.role != "harvester" && creep.room.energyAvailable > 250 ) {
+                	// for non-harvesters, try to extract from spawn instead
                     // console.log(creep+": looking for energy structure to withdraw");
                     sources = creep.room.find(FIND_MY_STRUCTURES, {
         				filter: (structure) => {
         					return (structure.structureType == STRUCTURE_SPAWN);
         				}
         			});
-    			}
-                if( sources == null || sources.length == 0 )
-                    sources = creep.room.find(FIND_SOURCES);
+    			} 
+                if( sources == null || sources.length == 0 ) {
+					sources = creep.room.find(FIND_DROPPED_RESOURCES);
+					if( sources.length == 0 )
+                    	sources = creep.room.find(FIND_SOURCES);
+				}
                 
                 var idx = Game.time % sources.length;
                 source = sources[idx];
-                // console.log(creep+": found energy source "+source);
+                console.log(creep+": found energy source "+source);
                 creep.memory.source = source.id;
             }
             
@@ -46,6 +56,8 @@ module.exports = {
                 }
                 res = creep.withdraw(source, RESOURCE_ENERGY);
                 // if( res == OK ) console.log(creep+": withdrew energy from "+source);
+			} else if( source instanceof Resource ) {
+				res = creep.pickup(source);
             } else {
                 res = creep.harvest(source);
             }

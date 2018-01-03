@@ -3,7 +3,8 @@ var tasks = {
     "deliver_energy": require('task.deliver_energy'),
     "build": require('task.build'),
     "upgrade": require('task.upgrade'),
-    "idle": require('task.idle'),
+    //"idle": require('task.idle'),
+    "recycle": require('task.recycle'),
     "repair": require('task.repair')
 }
 
