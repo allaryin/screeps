@@ -22,7 +22,29 @@ function defendRoom(roomName) {
     }
 }
 
+function err(obj,e) {
+    console.log("!! ",obj,e);
+}
+
+var daemons = [ "base" ];
+
 module.exports.loop = function () {
+    
+    console.log(Game.time);
+    
+    // tick through daemons
+    var state = {};
+    for( var daemonIdx in daemons ) {
+        var daemonName = daemons[daemonIdx];
+        var daemon = null;
+        try {
+            daemon = require('daemon.'+daemonName);
+            daemon.run(state);
+            state[daemonName] = daemon.state;
+        } catch( e ) {
+            err(daemonName,e);
+        }
+    }
 
     var rcl = Game.spawns["Spawn1"].room.controller.level;
 
@@ -51,12 +73,8 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        // TODO: garbage collection
-
+        
         var role = creep.memory.role;
-        if( role == null || role == 'harvest' ) {
-            role = creep.memory.role = 'harvester';
-        }
         //console.log(creep+": "+role);
         ++roster[role].total;
 
@@ -65,7 +83,11 @@ module.exports.loop = function () {
                 creep.memory.task = null;
                 creep.memory.source = null;
             } else {
-                tasks[creep.memory.task].run(creep);
+                try {
+                    tasks[creep.memory.task].run(creep);
+                } catch( e ) {
+                    err(creep,e);
+                }
             }
         } else if( creep.carry.energy < creep.carryCapacity ) {
             creep.memory.task = 'get_energy';

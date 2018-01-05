@@ -18,13 +18,11 @@ module.exports = {
     			creep.memory.target = target.id;
 		}
 		
-		if( target == null ) {
+		if( target == null || target.hits == target.hitsMax ) {
 		    creep.say('?');
 		    creep.memory.task = 'upgrade';
 		    creep.memory.target = null;
 		    return;
-		} else {
-		    creep.say( target.hits +"/"+ target.hitsMax );
 		}
         
         var res = creep.repair(target);
@@ -37,7 +35,8 @@ module.exports = {
             creep.memory.task = 'get_energy';
             creep.memory.target = null;
         } else if( res == OK ) {
-            creep.say("🔨");
+            var percent = Math.round( 100.0 * target.hits / target.hitsMax );
+            creep.say("🔨 "+percent);
         }
 	}
 };
