@@ -3,34 +3,19 @@ var tasks = {
     "deliver_energy": require('task.deliver_energy'),
     "build": require('task.build'),
     "upgrade": require('task.upgrade'),
-    //"idle": require('task.idle'),
     "recycle": require('task.recycle'),
     "repair": require('task.repair')
-}
-
-/**
- * Lifted directly from http://docs.screeps.com/defense.html
- */
-function defendRoom(roomName) {
-    var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
-    if(hostiles.length > 0) {
-        var username = hostiles[0].owner.username;
-        Game.notify(`User ${username} spotted in room ${roomName}`);
-        var towers = Game.rooms[roomName].find(
-            FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-        towers.forEach(tower => tower.attack(hostiles[0]));
-    }
 }
 
 function err(obj,e) {
     console.log("!! ",obj,e);
 }
 
-var daemons = [ "base" ];
+var daemons = [ "base", "defense" ];
 
 module.exports.loop = function () {
     
-    console.log(Game.time);
+    // console.log(Game.time);
     
     // tick through daemons
     var state = {};
@@ -100,8 +85,10 @@ module.exports.loop = function () {
     for(var name in Game.spawns) {
         var spawn = Game.spawns[name];
         
+        /*
         // trigger towers
         defendRoom(spawn.room.name);
+        */
         
         // only try to spawn from full for now
         if( spawn.spawning ) {
